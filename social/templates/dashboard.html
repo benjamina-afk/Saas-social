@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>SaaS Social - Dossiers</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 260px;
+            background-color: #1f2933;
+            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .sidebar h2 {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .sidebar label {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .sidebar select {
+            width: 100%;
+            padding: 6px;
+            border-radius: 4px;
+            border: none;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f5f7fa;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: #fff;
+        }
+        th, td {
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        th {
+            background-color: #e5e9f0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Dossiers</h2>
+        <label for="client-select">Sélectionner un dossier :</label>
+        <select id="client-select">
+            <option value="">— Choisir une entreprise —</option>
+            {% for c in clients %}
+                <option value="{% url 'dashboard_client' c.pk %}"
+                    {% if client and client.pk == c.pk %}selected{% endif %}
+                >
+                    {{ c.raison_social }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="content">
+        {% if client %}
+            <h1>{{ client.raison_social }}</h1>
+            <p><strong>Ville :</strong> {{ client.ville }} ({{ client.code_postal }})</p>
+            <p><strong>Email :</strong> {{ client.email }} | <strong>Téléphone :</strong> {{ client.telephone }}</p>
+
+            <h2>Salariés</h2>
+            {% if client.salaries.all %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Emploi</th>
+                            <th>Qualification</th>
+                            <th>Date d'entrée</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in client.salaries.all %}
+                            <tr>
+                                <td>{{ s.nom }}</td>
+                                <td>{{ s.prenom }}</td>
+                                <td>{{ s.emploi }}</td>
+                                <td>{{ s.qualification }}</td>
+                                <td>{{ s.date_entree }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Aucun salarié pour ce dossier.</p>
+            {% endif %}
+        {% else %}
+            <h1>Aucun dossier sélectionné</h1>
+            <p>Choisis une entreprise dans la liste à gauche.</p>
+        {% endif %}
+    </div>
+
+    <script>
+    (function() {
+        var select = document.getElementById("client-select");
+        if (select) {
+            select.addEventListener("change", function() {
+                if (this.value) {
+                    window.location.href = this.value;
+                }
+            });
+        }
+    })();
+    </script>
+</body>
+</html>
+
+<a href="{% url 'ajouter_entreprise' %}" class="btn btn-primary">
+    + Ajouter une entreprise
+</a>

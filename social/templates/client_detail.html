@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}{{ client.raison_social }} - Mon SaaS{% endblock %}
+
+{% block content %}
+    <h1>{{ client.raison_social }}</h1>
+
+    <p><strong>SIRET :</strong> {{ client.siret }}</p>
+    <p><strong>Adresse :</strong> {{ client.adresse1 }} {{ client.code_postal }} {{ client.ville }}</p>
+    <p><strong>Email :</strong> {{ client.email }}</p>
+    <p><strong>Téléphone :</strong> {{ client.telephone }}</p>
+
+    <hr>
+
+    <h2>Salariés</h2>
+    {% if client.salaries.all %}
+        <ul>
+            {% for s in client.salaries.all %}
+                <li>
+                    {{ s.nom }} {{ s.prenom }} – {{ s.emploi }} ({{ s.qualification }})
+                </li>
+            {% empty %}
+                <li>Aucun salarié pour l’instant.</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun salarié trouvé.</p>
+    {% endif %}
+{% endblock %}

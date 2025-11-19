@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Ajouter une entreprise</h2>
+
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        <div class="mb-3" style="max-width: 400px;">
+            <label for="id_siret" class="form-label">SIRET</label>
+            <input type="text"
+                   name="siret"
+                   id="id_siret"
+                   class="form-control"
+                   placeholder="Ex : 51098595500028">
+        </div>
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+
+    {% if entreprise %}
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">{{ entreprise.denomination }}</h5>
+                    <small class="text-muted">
+                        SIREN : {{ entreprise.siren }} • SIRET : {{ entreprise.siret }}
+                    </small>
+                </div>
+                <span class="badge bg-secondary">
+                    {% if entreprise.etablissement_siege %}Établissement siège{% else %}Établissement secondaire{% endif %}
+                </span>
+            </div>
+            <div class="card-body">
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Identité juridique</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Catégorie juridique :</strong> {{ entreprise.categorie_juridique }}</li>
+                            <li><strong>Catégorie d'entreprise :</strong> {{ entreprise.categorie_entreprise }}</li>
+                            <li><strong>Date de création :</strong> {{ entreprise.date_creation }}</li>
+                            <li><strong>État administratif :</strong> {{ entreprise.etat_admin }}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Activité</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Activité principale :</strong> {{ entreprise.activite_principale }}</li>
+                            <li><strong>Nomenclature :</strong> {{ entreprise.naf_nomenclature }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <h6 class="text-muted">Adresse de l'établissement</h6>
+                        <p class="mb-1">
+                            {{ entreprise.numero_voie }} {{ entreprise.type_voie }} {{ entreprise.libelle_voie }}<br>
+                            {{ entreprise.code_postal }} {{ entreprise.commune }}
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-muted">Effectifs</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                <strong>Tranche effectifs établissement :</strong>
+                                {{ entreprise.tranche_effectifs_etab }} ({{ entreprise.annee_effectifs_etab }})
+                            </li>
+                            <li>
+                                <strong>Tranche effectifs unité légale :</strong>
+                                {{ entreprise.tranche_effectifs_ul }} ({{ entreprise.annee_effectifs_ul }})
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

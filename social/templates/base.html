@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mon SaaS Social{% endblock %}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #1f2933;
+            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .sidebar h2 {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .sidebar label {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .sidebar select {
+            width: 100%;
+            padding: 6px;
+            border-radius: 4px;
+            border: none;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <label for="client-select">Clients :</label>
+        <select id="client-select">
+            <option value="">— Choisir une entreprise —</option>
+            {% for c in clients %}
+                <option
+                    value="{% url 'dashboard_client' c.pk %}"
+                    {% if client and client.pk == c.pk %}selected{% endif %}
+                >
+                    {{ c.raison_social }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+    (function() {
+        var select = document.getElementById("client-select");
+        if (select) {
+            select.addEventListener("change", function() {
+                if (this.value) {
+                    window.location.href = this.value;
+                }
+            });
+        }
+    })();
+    </script>
+</body>
+</html>
