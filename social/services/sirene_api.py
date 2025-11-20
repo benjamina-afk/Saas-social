@@ -1,26 +1,58 @@
 import requests
 
-API_KEY = "683c16b7-7e0a-4713-bc16-b77e0ac71357"  # celle que tu vois dans 'Clés d’API'
-BASE_URL = "https://api.insee.fr/api-sirene/3.11/siret"
+# 🔑 Mets ici ta vraie clé d'API du nouveau portail Insee
+API_KEY = "683c16b7-7e0a-4713-bc16-b77e0ac71357"
 
-def get_siret_info(siret: str):
-    """
-    Appelle l'API Sirene avec la clé API du portail.
-    Retourne le JSON si le SIRET existe, sinon None.
-    """
-    url = f"{BASE_URL}/{siret}"
+# ✅ Nouvelles URLs officielles (version 3.11)
+BASE_SIREN_URL = "https://api.insee.fr/api-sirene/3.11/siren"
+BASE_SIRET_URL = "https://api.insee.fr/api-sirene/3.11/siret"
 
-    headers = {
-        "X-INSEE-Api-Key-Integration": API_KEY,  # <- NOM TRÈS IMPORTANT
+
+def _headers():
+    """
+    Headers conformes à la doc Insee :
+    la clé d'API se met dans X-INSEE-Api-Key-Integration
+    """
+    return {
+        "X-INSEE-Api-Key-Integration": API_KEY,
         "Accept": "application/json",
     }
 
-    response = requests.get(url, headers=headers, timeout=10)
+
+def get_siren_info(siren: str):
+    """
+    Appel direct au service /siren/{siren}
+    """
+    url = f"{BASE_SIREN_URL}/{siren}"
+
+    print("INSEE URL:", url)
+
+    response = requests.get(url, headers=_headers(), timeout=10)
 
     print("INSEE status:", response.status_code)
     print("INSEE body:", response.text)
 
-    if response.status_code == 200:
-        return response.json()
+    if response.status_code != 200:
+        return None
 
-    return None
+    return response.json()
+
+
+def get_siret_info(siret: str):
+    """
+    Appel direct au service /siret/{siret}
+    (on s’en servira éventuellement plus tard)
+    """
+    url = f"{BASE_SIRET_URL}/{siret}"
+
+    print("INSEE URL:", url)
+
+    response = requests.get(url, headers=_headers(), timeout=10)
+
+    print("INSEE status:", response.status_code)
+    print("INSEE body:", response.text)
+
+    if response.status_code != 200:
+        return None
+
+    return response.json()
